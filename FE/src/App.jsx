@@ -9,19 +9,19 @@ import './App.css'
 
 function App() {
   const [todo, setTodo] = useState([{
-    "todoid": "",
+    "todoId": "",
     "checkBox": "",
     "todoContent": "",
     "todoDate": ""
   }]);
-  const idRef = useRef(todo.length);
+  const idRef = useRef(0);
   
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:8080/todo/read");
         setTodo(response.data);
-        idRef.current = response.data.length;
+        idRef.current = response.data.length+1;
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -31,7 +31,7 @@ function App() {
 
   const onCreate = (todoContent) => {
     const newData = {
-      todoid: idRef.current,
+      todoId: idRef.current,
       checkBox: false,
       todoContent,
       todoDate: new Date().getTime()
@@ -39,16 +39,14 @@ function App() {
   
     const addData = async () => {
       try {
+        idRef.current += 1;
         await axios.post("http://localhost:8080/todo/add", newData);
         setTodo([...todo, newData]);
-
       }catch(error){
         console.log("Error");
       }
     }
     addData();
-    console.log(todo)
-    console.log(newData)
   };
 
   const onUpdate = (targetId) => {
@@ -59,10 +57,16 @@ function App() {
     )
   }
 
-  const onDelete = (targetId) => {
-    setTodo(
-      todo.filter((it) => it.id !== targetId)
-    )
+  const onDelete = async (todoId) => {
+    try {
+        console.log(todoId)
+        await axios.post("http://localhost:8080/todo/delete/" + todoId);
+        setTodo(
+          todo.filter((it) => it.id !== todoId)
+        )
+    } catch(error){
+      console.log(error);
+    }
   }
 
   return (
@@ -70,8 +74,6 @@ function App() {
       <TodoDate />
       <TodoWrite onCreate={onCreate}/>
       <TodoList todo={todo} onUpdate={onUpdate} onDelete={onDelete}/>
-      <button onClick={() => {console.log(todo);
-      }}>button</button>
     </div>
   )
 }

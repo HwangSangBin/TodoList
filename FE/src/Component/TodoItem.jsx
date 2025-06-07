@@ -1,12 +1,12 @@
 import "./TodoItem.css"
 
-const TodoItem = ({todoid, checkBox, todoContent, todoDate, onUpdate, onDelete}) => {
+const TodoItem = ({todoId, checkBox, todoContent, todoDate, onUpdate, onDelete}) => {
     const onUpdateCheck = () => {
-        onUpdate(todoid);
+        onUpdate(todoId);
     }
 
     const onDeleteBtn = () =>  {
-        onDelete(todoid);
+        onDelete(todoId);
     }
     return(
         <div className="TodoItem">
